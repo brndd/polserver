@@ -259,6 +259,9 @@ protected:
   static void lowest_standheight( Plib::MOVEMODE movemode, Plib::MapShapeList& shapes, short oldz,
                                   bool* result, short* newz, short* gradual_boost = nullptr );
 
+  static std::vector<int> get_standheights( Plib::MOVEMODE movemode, Plib::MapShapeList shapes,
+                                            short minz, short maxz );
+
   static bool dropheight( Plib::MapShapeList& shapes, short dropz, short chrz, short* newz );
 
   static bool dynamic_item_blocks_los( const Core::Pos3d& pos, LosCache& cache );

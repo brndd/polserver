@@ -4429,14 +4429,15 @@ BObjectImp* UOExecutorModule::mf_GetStandingHeight()
   }
 }
 
-BObjectImp* UOExecutorModule::mf_GetStandingLayers( /* x, y, flags, realm */ )
+BObjectImp* UOExecutorModule::mf_GetStandingLayers( /* x, y, flags, realm, includeitems */ )
 {
   unsigned short x, y;
   int flags;
   const String* strrealm;
+  int includeitems;
 
   if ( getParam( 0, x ) && getParam( 1, y ) && getParam( 2, flags ) &&
-       getStringParam( 3, strrealm ) )
+       getStringParam( 3, strrealm ) && getParam( 4, includeitems ) )
   {
     Realms::Realm* realm = find_realm( strrealm->value() );
     if ( !realm )
@@ -4451,7 +4452,10 @@ BObjectImp* UOExecutorModule::mf_GetStandingLayers( /* x, y, flags, realm */ )
     Core::ItemsVector ivec;
     realm->readmultis( mlist, x, y, flags );
     realm->getmapshapes( mlist, x, y, flags );
-    realm->readdynamics( mlist, x, y, ivec, false, flags );
+    if (includeitems)
+    {
+      realm->readdynamics( mlist, x, y, ivec, false, flags );
+    }
 
     for ( unsigned i = 0; i < mlist.size(); ++i )
     {
@@ -4471,6 +4475,37 @@ BObjectImp* UOExecutorModule::mf_GetStandingLayers( /* x, y, flags, realm */ )
   }
   else
     return new BError( "Invalid parameter type" );
+}
+
+BObjectImp* UOExecutorModule::mf_GetStandingCoordinates(/* x, y, radius, zmin, zmax, realm, movemode */)
+{
+  int x, y, r, zmin, zmax;
+  const String* realmname;
+  const String* movemodename;
+
+  if (!(
+           getParam(0, x) &&
+           getParam(1, y) &&
+           getParam(2, r) &&
+           getParam(3, zmin) &&
+           getParam(4, zmax) &&
+           getStringParam(5, realmname) &&
+           getStringParam(6, movemodename)
+          ))
+  {
+    return new BError("Invalid parameter type");
+  }
+
+  Realms::Realm* realm = find_realm(realmname->value());
+  if (!realm)
+    return new BError("Realm not found");
+  if (!realm->valid(x, y, 0))
+    return new BError("Coordinates invalid for realm");
+
+  Plib::MOVEMODE movemode = Character::decode_movemode(movemodename->value());
+
+
+
 }
 
 BObjectImp* UOExecutorModule::mf_ReserveItem()

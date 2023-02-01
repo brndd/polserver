@@ -300,6 +300,25 @@ void Realm::lowest_standheight( Plib::MOVEMODE movemode, Plib::MapShapeList& sha
   }
 }
 
+std::vector<int> Realm::get_standheights(Plib::MOVEMODE movemode, Plib::MapShapeList shapes, short minz, short maxz )
+{
+  std::vector<int> heights;
+  unsigned int moveflags = 0;
+
+  //there being two separate sets of moveflags for this is quite painful
+  if (movemode & Plib::MOVEMODE_LAND)
+    moveflags = moveflags | Plib::FLAG::MOVELAND;
+  if (movemode & Plib::MOVEMODE_SEA)
+    moveflags = moveflags | Plib::FLAG::MOVESEA;
+  if (movemode & Plib::MOVEMODE_FLY)
+    moveflags = moveflags | Plib::FLAG::OVERFLIGHT;
+
+  for (const auto & shape : shapes)
+  {
+
+  }
+
+}
 
 void Realm::readdynamics( Plib::MapShapeList& vec, const Core::Pos2d& pos,
                           Core::ItemsVector& walkon_items, bool doors_block,
